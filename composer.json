@@ -1,0 +1,30 @@
+{
+    "name": "cloudstek/php-enum",
+    "description": "Enumeration support for PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maarten de Boer",
+            "email": "maarten@cloudstek.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cloudstek\\Enum\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cloudstek\\Enum\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^5.0",
+        "vimeo/psalm": "^3.8",
+        "squizlabs/php_codesniffer": "^3.5"
+    }
+}

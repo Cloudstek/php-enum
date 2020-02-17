@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="php-enum">
+    <config name="php_version" value="70200" />
+    <config name="ignore_warnings_on_exit" value="1" />
+    <config name="default_standard" value="PSR2" />
+
+    <!-- Files -->
+    <file>./src</file>
+    <exclude-pattern>tests/*</exclude-pattern>
+
+    <!-- PSR-2 -->
+    <rule ref="PSR2" />
+</ruleset>
