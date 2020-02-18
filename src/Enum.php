@@ -116,14 +116,25 @@ abstract class Enum implements \JsonSerializable
     /**
      * Get an enum instance by name.
      *
-     * @param string $name
+     * @param string|static $name
      *
      * @throws \UnexpectedValueException on unknown enum member
      *
      * @return static
      */
-    final public static function get(string $name)
+    final public static function get($name)
     {
+        // If it's an enum instance, check it.
+        if (is_object($name)) {
+            if (get_class($name) === static::$class) {
+                return $name;
+            }
+
+            throw new \UnexpectedValueException(
+                sprintf('Instance is not an enum member of %s.', static::class)
+            );
+        }
+
         // Prevent access to properties, constants and method prefixed with _
         if (strpos($name, '_') === 0) {
             throw new \UnexpectedValueException(
@@ -151,17 +162,18 @@ abstract class Enum implements \JsonSerializable
         // Property or constant value
         $value = null;
 
-        if ($ref->hasMethod($propName)) {
-            $method = $ref->getMethod($propName);
-            $method->setAccessible(true);
-            $value = $method->invoke(new static(''));
-        } elseif ($ref->hasConstant($constName)) {
+        if ($ref->hasConstant($constName)) {
             $value = $ref->getConstant($constName);
         } elseif ($ref->hasProperty($propName)) {
             $prop = $ref->getProperty($propName);
             $prop->setAccessible(true);
 
             $value = $prop->getValue(new static(''));
+        } elseif ($ref->hasMethod($propName)) {
+            $method = $ref->getMethod($propName);
+            $method->setAccessible(true);
+
+            $value = $method->invoke(new static(''));
         } else {
             throw new \UnexpectedValueException(
                 sprintf('%s is not an enum member of %s.', $name, $calledClass)
@@ -181,12 +193,17 @@ abstract class Enum implements \JsonSerializable
     /**
      * Check if enum has a member.
      *
-     * @param string $name
+     * @param string|static $name
      *
      * @return bool
      */
-    final public static function has(string $name): bool
+    final public static function has($name): bool
     {
+        // If it's an enum instance, check it.
+        if (is_object($name)) {
+            return get_class($name) === static::class;
+        }
+
         // Prevent access to properties, constants and method prefixed with _
         if (strpos($name, '_') === 0) {
             return false;
@@ -197,14 +214,19 @@ abstract class Enum implements \JsonSerializable
         // Normalize name to upper snake_case.
         $normalName = self::normalizeName($name);
 
+        // Check if cached.
+        if (isset(self::$_instances[static::class][$name])) {
+            return true;
+        }
+
         // Convert casing
         $methodName = str_replace('_', '', $name);
         $propName = static::convertPropertyCase($normalName);
         $constName = static::convertConstantCase($normalName);
 
-        return $ref->hasMethod($methodName)
-            || $ref->hasConstant($constName)
+        return $ref->hasConstant($constName)
             || $ref->hasProperty($propName)
+            || $ref->hasMethod($methodName)
         ;
     }
 

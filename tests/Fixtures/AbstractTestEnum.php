@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cloudstek\Enum\Tests;
+namespace Cloudstek\Enum\Tests\Fixtures;
 
 use Cloudstek\Enum\Enum;
 

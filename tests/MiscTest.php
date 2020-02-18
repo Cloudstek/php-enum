@@ -13,7 +13,7 @@ class MiscTest extends TestCase
      */
     public function testValueTypes()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $stringValue = 'foo';
             private $boolValue = true;
             private $intValue = 3;
@@ -41,7 +41,7 @@ class MiscTest extends TestCase
      */
     public function testToStringValue()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -68,7 +68,7 @@ class MiscTest extends TestCase
     {
         $this->expectException(\LogicException::class);
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 

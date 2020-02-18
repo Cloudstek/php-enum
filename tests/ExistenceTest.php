@@ -13,7 +13,7 @@ class ExistenceTest extends TestCase
      */
     public function testHasByName()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -50,6 +50,7 @@ class ExistenceTest extends TestCase
 
         // snake_case constant
         $this->assertTrue($enum::has('OTHER_BAR'));
+        $this->assertTrue($enum::has('OTHER BAR'));
         $this->assertTrue($enum::has('other_bar'));
         $this->assertTrue($enum::has('Other_BaR'));
 
@@ -80,22 +81,12 @@ class ExistenceTest extends TestCase
      */
     public function testHasByInvalidName()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
             private const BAR = 'bar';
             private const OTHER_BAR = 'other bar';
-
-            private function lorum()
-            {
-                return 'lorum';
-            }
-
-            private function otherLorum()
-            {
-                return 'other lorum';
-            }
         };
 
         // Completely missing.
@@ -117,6 +108,53 @@ class ExistenceTest extends TestCase
     }
 
     /**
+     * Test if enum has a member by instance.
+     */
+    public function testHasByInstance()
+    {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
+            private $foo = 'foo';
+            private $otherFoo = 'other foo';
+
+            private const BAR = 'bar';
+            private const OTHER_BAR = 'other bar';
+
+            private function lorum()
+            {
+                return 'lorum';
+            }
+
+            private function otherLorum()
+            {
+                return 'other lorum';
+            }
+        };
+
+        $this->assertTrue($enum::has($enum::FOO()));
+        $this->assertTrue($enum::has($enum::OTHER_FOO()));
+        $this->assertTrue($enum::has($enum::BAR()));
+        $this->assertTrue($enum::has($enum::OTHER_BAR()));
+        $this->assertTrue($enum::has($enum::LORUM()));
+        $this->assertTrue($enum::has($enum::OTHER_LORUM()));
+    }
+
+    /**
+     * Test if enum does not has a member by instance.
+     */
+    public function testHasByInvalidInstance()
+    {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
+            private $foo = 'foo';
+        };
+
+        $otherEnum = new class() extends Fixtures\AbstractTestEnum {
+            private $foo = 'foo';
+        };
+
+        $this->assertFalse($enum::has($otherEnum::FOO()));
+    }
+
+    /**
      * Test getting an invalid member when calling static.
      */
     public function testNonExistingMemberStatic()
@@ -124,7 +162,7 @@ class ExistenceTest extends TestCase
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('BAR is not an enum member of');
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 
@@ -139,7 +177,7 @@ class ExistenceTest extends TestCase
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('_NAME is not an enum member of');
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 
@@ -154,7 +192,7 @@ class ExistenceTest extends TestCase
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('BAR is not an enum member of');
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 
@@ -169,7 +207,7 @@ class ExistenceTest extends TestCase
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('_NAME is not an enum member of');
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 

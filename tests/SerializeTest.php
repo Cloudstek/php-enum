@@ -13,7 +13,7 @@ class SerializeTest extends TestCase
      */
     public function testJsonSerialize()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -48,7 +48,7 @@ class SerializeTest extends TestCase
     {
         $this->expectException(\Exception::class);
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 
@@ -62,7 +62,7 @@ class SerializeTest extends TestCase
     {
         $this->expectException(\LogicException::class);
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 
@@ -76,7 +76,7 @@ class SerializeTest extends TestCase
     {
         $this->expectException(\LogicException::class);
 
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
         };
 

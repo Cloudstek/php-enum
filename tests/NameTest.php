@@ -13,7 +13,7 @@ class NameTest extends TestCase
      */
     public function testNameStatic()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -61,7 +61,7 @@ class NameTest extends TestCase
      */
     public function testNameWithGetter()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
