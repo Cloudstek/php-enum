@@ -13,7 +13,7 @@ class EqualityTest extends TestCase
      */
     public function testSameInstance()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private const BAR = 'bar';
 
@@ -23,15 +23,15 @@ class EqualityTest extends TestCase
             }
         };
 
-        $this->assertEquals('foo', $enum::FOO()->getValue());
+        $this->assertInstanceOf(get_class($enum), $enum::FOO());
         $this->assertSame($enum::FOO(), $enum::FOO());
         $this->assertSame($enum::get('FOO'), $enum::FOO());
 
-        $this->assertEquals('bar', $enum::BAR()->getValue());
+        $this->assertInstanceOf(get_class($enum), $enum::BAR());
         $this->assertSame($enum::BAR(), $enum::BAR());
         $this->assertSame($enum::get('BAR'), $enum::BAR());
 
-        $this->assertEquals('lorum', $enum::LORUM()->getValue());
+        $this->assertInstanceOf(get_class($enum), $enum::LORUM());
         $this->assertSame($enum::LORUM(), $enum::LORUM());
         $this->assertSame($enum::get('LORUM'), $enum::LORUM());
     }
@@ -41,7 +41,7 @@ class EqualityTest extends TestCase
      */
     public function testSameInstanceStaticCaseInsensitive()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -83,7 +83,7 @@ class EqualityTest extends TestCase
      */
     public function testSameInstanceGetterCaseInsensitive()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'other foo';
 
@@ -121,11 +121,55 @@ class EqualityTest extends TestCase
     }
 
     /**
+     * Test same instances when calling with get() by instance.
+     */
+    public function testSameInstanceGetterByInstance()
+    {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
+            private $foo = 'foo';
+            private const BAR = 'bar';
+
+            private function lorum()
+            {
+                return 'lorum';
+            }
+        };
+
+        $this->assertSame($enum::get($enum::FOO()), $enum::FOO());
+        $this->assertSame($enum::get($enum::BAR()), $enum::BAR());
+        $this->assertSame($enum::get($enum::LORUM()), $enum::LORUM());
+    }
+
+    /**
+     * Test get() will throw an exception when calling it with a different instance.
+     */
+    public function testSameInstanceGetterByDifferentInstanceThrowing()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+
+        $enum = new class() extends Fixtures\AbstractTestEnum {
+            private $foo = 'foo';
+            private const BAR = 'bar';
+
+            private function lorum()
+            {
+                return 'lorum';
+            }
+        };
+
+        $otherEnum = new class() extends Fixtures\AbstractTestEnum {
+            private $hello = 'world';
+        };
+
+        $this->assertNotSame($enum::get($otherEnum::HELLO()), $otherEnum::HELLO());
+    }
+
+    /**
      * Test different instances with same value to not equal.
      */
     public function testSameValueDifferentInstance()
     {
-        $enum = new class() extends AbstractTestEnum {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
             private $foo = 'foo';
             private $otherFoo = 'foo';
 
@@ -154,46 +198,5 @@ class EqualityTest extends TestCase
         $this->assertEquals('lorum', $enum::LORUM()->getValue());
         $this->assertEquals('lorum', $enum::OTHER_LORUM()->getValue());
         $this->assertNotSame($enum::LORUM(), $enum::OTHER_LORUM());
-    }
-
-    /**
-     * Test resolve method before constant.
-     *
-     * Make sure that methods are resolved before constants and properties.
-     */
-    public function testResolveMethodBeforeConstant()
-    {
-        $enum = new class() extends AbstractTestEnum {
-            private const FOO = 'foo const';
-            private $foo = 'foo prop';
-
-            private function foo()
-            {
-                return 'foo method';
-            }
-        };
-
-        $this->assertEquals('foo method', $enum::FOO()->getValue());
-        $this->assertEquals('foo method', (string) $enum::FOO());
-        $this->assertSame($enum::FOO(), $enum::FOO());
-        $this->assertSame($enum::FOO(), $enum::get('FOO'));
-    }
-
-    /**
-     * Test resolve constant before property.
-     *
-     * Make sure that constants are resolved before properties.
-     */
-    public function testResolveConstantBeforeProperty()
-    {
-        $enum = new class() extends AbstractTestEnum {
-            private const FOO = 'foo const';
-            private $foo = 'foo prop';
-        };
-
-        $this->assertEquals('foo const', $enum::FOO()->getValue());
-        $this->assertEquals('foo const', (string) $enum::FOO());
-        $this->assertSame($enum::FOO(), $enum::FOO());
-        $this->assertSame($enum::FOO(), $enum::get('FOO'));
     }
 }

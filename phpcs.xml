@@ -9,5 +9,7 @@
     <exclude-pattern>tests/*</exclude-pattern>
 
     <!-- PSR-2 -->
-    <rule ref="PSR2" />
+    <rule ref="PSR2">
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+    </rule>
 </ruleset>
