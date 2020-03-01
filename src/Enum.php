@@ -116,7 +116,7 @@ abstract class Enum implements \JsonSerializable
     /**
      * Get an enum instance by name.
      *
-     * @param string|static $name
+     * @param string|static $name Name or member instance.
      *
      * @throws \UnexpectedValueException on unknown enum member
      *
@@ -124,15 +124,25 @@ abstract class Enum implements \JsonSerializable
      */
     final public static function get($name)
     {
+        // Called class name
+        $calledClass = static::class;
+
         // If it's an enum instance, check it.
         if (is_object($name)) {
-            if (get_class($name) === static::$class) {
-                return $name;
+            if ($name instanceof $calledClass === false) {
+                throw new \UnexpectedValueException(
+                    sprintf('Instance is not an enum member of %s.', static::class)
+                );
             }
 
-            throw new \UnexpectedValueException(
-                sprintf('Instance is not an enum member of %s.', static::class)
-            );
+            // Get actual name
+            $name = $name->getName();
+
+            $instance = self::$_instances[$calledClass][$name] ?? null;
+
+            if ($instance !== null) {
+                return $instance;
+            }
         }
 
         // Prevent access to properties, constants and method prefixed with _
@@ -142,9 +152,6 @@ abstract class Enum implements \JsonSerializable
             );
         }
 
-        // Called class name
-        $calledClass = static::class;
-
         // Normalize name to upper snake_case
         $name = self::normalizeName($name);
 
@@ -153,6 +160,7 @@ abstract class Enum implements \JsonSerializable
             return self::$_instances[$calledClass][$name];
         }
 
+        // Reflection
         $ref = new \ReflectionClass($calledClass);
 
         // Convert casing
@@ -199,9 +207,23 @@ abstract class Enum implements \JsonSerializable
      */
     final public static function has($name): bool
     {
+        // Called class name
+        $calledClass = static::class;
+
         // If it's an enum instance, check it.
         if (is_object($name)) {
-            return get_class($name) === static::class;
+            if ($name instanceof $calledClass === false) {
+                return false;
+            }
+
+            // Get actual name
+            $name = $name->getName();
+
+            $instance = self::$_instances[$calledClass][$name] ?? null;
+
+            if ($instance !== null) {
+                return true;
+            }
         }
 
         // Prevent access to properties, constants and method prefixed with _
@@ -209,13 +231,13 @@ abstract class Enum implements \JsonSerializable
             return false;
         }
 
-        $ref = new \ReflectionClass(static::class);
+        $ref = new \ReflectionClass($calledClass);
 
         // Normalize name to upper snake_case.
         $normalName = self::normalizeName($name);
 
         // Check if cached.
-        if (isset(self::$_instances[static::class][$name])) {
+        if (isset(self::$_instances[$calledClass][$name])) {
             return true;
         }
 
