@@ -164,8 +164,9 @@ abstract class Enum implements \JsonSerializable
         $ref = new \ReflectionClass($calledClass);
 
         // Convert casing
-        $propName = static::convertPropertyCase($name);
-        $constName = static::convertConstantCase($name);
+        $constName = static::normalizeConstantName($name);
+        $propName = static::normalizePropertyName($name);
+        $methodName = static::normalizeMethodName($name);
 
         // Property or constant value
         $value = null;
@@ -177,8 +178,8 @@ abstract class Enum implements \JsonSerializable
             $prop->setAccessible(true);
 
             $value = $prop->getValue(new static(''));
-        } elseif ($ref->hasMethod($propName)) {
-            $method = $ref->getMethod($propName);
+        } elseif ($ref->hasMethod($methodName)) {
+            $method = $ref->getMethod($methodName);
             $method->setAccessible(true);
 
             $value = $method->invoke(new static(''));
@@ -242,9 +243,9 @@ abstract class Enum implements \JsonSerializable
         }
 
         // Convert casing
-        $methodName = str_replace('_', '', $name);
-        $propName = static::convertPropertyCase($normalName);
-        $constName = static::convertConstantCase($normalName);
+        $constName = static::normalizeConstantName($normalName);
+        $propName = static::normalizePropertyName($normalName);
+        $methodName = str_replace('_', '', self::normalizeMethodName($normalName));
 
         return $ref->hasConstant($constName)
             || $ref->hasProperty($propName)
@@ -274,17 +275,33 @@ abstract class Enum implements \JsonSerializable
     }
 
     /**
-     * Convert the enum name to property name.
+     * Convert the member name to constant name.
+     *
+     * By default this will convert everything to uppercase.
+     *
+     * Override this method if you prefer other casing.
+     *
+     * @param string $name The normalized member name (e.g. FOO_BAR)
+     *
+     * @return string the constant name
+     */
+    protected static function normalizeConstantName(string $name): string
+    {
+        return strtoupper($name);
+    }
+
+    /**
+     * Convert the member name to property name.
      *
      * By default this will convert upper snake_case (e.g. FOO_BAR) to camelCase (e.g. fooBar).
      *
      * Override this method if you prefer other casing like snake_case.
      *
-     * @param string $name The enum name (e.g. FOO_BAR)
+     * @param string $name The normalized member name (e.g. FOO_BAR)
      *
      * @return string the property name
      */
-    protected static function convertPropertyCase(string $name): string
+    protected static function normalizePropertyName(string $name): string
     {
         $parts = explode('_', strtolower($name), 2);
 
@@ -296,17 +313,25 @@ abstract class Enum implements \JsonSerializable
     }
 
     /**
-     * Convert the enum name to constant name.
+     * Convert the member name to method name.
      *
-     * By default this will convert everything to uppercase.
+     * By default this will convert upper snake_case (e.g. FOO_BAR) to camelCase (e.g. fooBar).
      *
-     * @param string $name The enum name (e.g. foo_bar)
+     * Override this method if you prefer other casing like snake_case.
      *
-     * @return string the constant name
+     * @param string $name The normalized member name (e.g. FOO_BAR)
+     *
+     * @return string the method name (without ())
      */
-    protected static function convertConstantCase(string $name): string
+    protected static function normalizeMethodName(string $name): string
     {
-        return strtoupper($name);
+        $parts = explode('_', strtolower($name), 2);
+
+        if (count($parts) === 1) {
+            return $parts[0];
+        }
+
+        return $parts[0].str_replace(' ', '', ucwords(str_replace('_', ' ', $parts[1])));
     }
 
     /**
