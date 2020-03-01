@@ -42,4 +42,23 @@ class InheritanceTest extends TestCase
         $this->assertNotSame($enum::FOO(), Fixtures\FooEnum::FOO());
         $this->assertNotSame($enum::get('FOO'), Fixtures\FooEnum::FOO());
     }
+
+    /**
+     * Test getter on base class with inherited instance throwing exception.
+     *
+     * This makes sure that even though the inherited enum is an instance of the base enum, proper validation is done
+     * in the getter so the member of the inherited enum is not mistaken for a member of the base class.
+     */
+    public function testGetterByInheritedInstanceNotSame()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+
+        $fooEnum = new Fixtures\FooEnum();
+
+        $barEnum = new class() extends Fixtures\FooEnum {
+            private $bar = 'bar';
+        };
+
+        $this->assertNotSame($fooEnum::get($barEnum::BAR()), $barEnum::BAR());
+    }
 }

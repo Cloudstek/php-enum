@@ -74,4 +74,26 @@ class MiscTest extends TestCase
 
         $foo = clone $enum;
     }
+
+    /**
+     * Test member method called once.
+     *
+     * Make sure that member methods are only called once to retreive their value. Any subsequent call to get the value
+     * should lead to the same result.
+     */
+    public function testMemberMethodCalledOnce()
+    {
+        $enum = new class() extends Fixtures\AbstractTestEnum {
+            private function foo()
+            {
+                return bin2hex(random_bytes(4));
+            }
+        };
+
+        $value = $enum::FOO()->getValue();
+
+        $this->assertEquals($enum::FOO()->getValue(), $value);
+        $this->assertEquals($enum::FOO()->getValue(), $enum::FOO()->getValue());
+        $this->assertEquals((string) $enum::FOO(), $enum::FOO()->getValue());
+    }
 }
