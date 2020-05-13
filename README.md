@@ -3,6 +3,7 @@
 > Enumeration support for PHP.
 
 [![Build Status](https://img.shields.io/github/workflow/status/Cloudstek/php-enum/php)](https://github.com/Cloudstek/php-enum/actions) [![Coverage Status](https://coveralls.io/repos/github/Cloudstek/php-enum/badge.svg)](https://coveralls.io/github/Cloudstek/php-enum) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Cloudstek/php-enum?label=latest) ![Downloads](https://img.shields.io/packagist/dt/cloudstek/php-enum) ![GitHub](https://img.shields.io/github/license/Cloudstek/php-enum) ![GitHub stars](https://img.shields.io/github/stars/Cloudstek/php-enum)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FCloudstek%2Fphp-enum.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FCloudstek%2Fphp-enum?ref=badge_shield)
 
 This package adds support for [enumerations](https://en.wikipedia.org/wiki/Enumerated_type) to PHP, which are unfortunately not supported natively.
 
@@ -248,3 +249,7 @@ If you have any ideas or issues, please open up an issue!
 * [myclabs/php-enum](https://github.com/myclabs/php-enum)
 * [eloquent/enumeration](https://github.com/eloquent/enumeration)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FCloudstek%2Fphp-enum.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FCloudstek%2Fphp-enum?ref=badge_large)
