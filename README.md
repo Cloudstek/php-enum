@@ -4,7 +4,9 @@
 
 [![Build Status](https://img.shields.io/github/workflow/status/Cloudstek/php-enum/php)](https://github.com/Cloudstek/php-enum/actions) [![Coverage Status](https://coveralls.io/repos/github/Cloudstek/php-enum/badge.svg)](https://coveralls.io/github/Cloudstek/php-enum) ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Cloudstek/php-enum?label=latest) ![Downloads](https://img.shields.io/packagist/dt/cloudstek/php-enum) ![GitHub](https://img.shields.io/github/license/Cloudstek/php-enum) ![GitHub stars](https://img.shields.io/github/stars/Cloudstek/php-enum)
 
-This package adds support for [enumerations](https://en.wikipedia.org/wiki/Enumerated_type) to PHP, which are unfortunately not supported natively.
+This package adds support for [enumerations](https://en.wikipedia.org/wiki/Enumerated_type) to PHP, ~~which are unfortunately not supported natively~~.
+
+⚠️ Since PHP 8.1 there is finally native support for enums in PHP. Please consider upgrading to PHP 8.1+ and migrating away from this package if you require enums in your application.
 
 Using a simple class with constants alone doesn't allow you to use type hints meaning you still have to do extensive checks whether the value is expected. This package allows you to define enumerations the same way but allows for type hinting for example your method parameter. This way you can always be sure it holds a concrete set of members and values.
 
